@@ -1,0 +1,39 @@
+import express from 'express';
+import Debug from 'debug';
+import morgan from 'morgan';
+
+// Routers
+import playerRouter from './routers/player.js';
+import itemRouter from './routers/item.js';
+import armorRouter from './routers/armor.js';
+import weaponRouter from './routers/weapon.js';
+
+const API_PORT = process.env.API_PORT || 5000;
+const app = express();
+const debug = Debug('fries-rest:core');
+
+app
+	// Imported Middleware
+	.use(morgan('tiny'))
+	.use(express.json())
+	.use(express.urlencoded({extended: true}))
+
+	// Routers
+	.use('/api/player', playerRouter)
+	.use('/api/item', itemRouter)
+	.use('/api/armor', armorRouter)
+	.use('/api/weapon', weaponRouter)
+
+	// Other Routes
+	.get('/', (req, res) =>
+	{
+		res
+			.status(200)
+			.send('API is here and listening!');
+	});
+
+// todo: listen on db connection success
+app.listen(API_PORT, () =>
+{
+	debug(`Server listening on port ${API_PORT}`);
+})
