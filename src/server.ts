@@ -2,13 +2,15 @@ import express from 'express';
 import Debug from 'debug';
 import morgan from 'morgan';
 
+import config from './config/config.js';
+import db from './util/mdb.js';
+
 // Routers
 import playerRouter from './routers/player.js';
 import itemRouter from './routers/item.js';
 import armorRouter from './routers/armor.js';
 import weaponRouter from './routers/weapon.js';
 
-const API_PORT = process.env.API_PORT || 5000;
 const app = express();
 const debug = Debug('fries-rest:core');
 
@@ -32,8 +34,10 @@ app
 			.send('API is here and listening!');
 	});
 
-// todo: listen on db connection success
-app.listen(API_PORT, () =>
+db.connect(() =>
 {
-	debug(`Server listening on port ${API_PORT}`);
+	app.listen(config.port, () =>
+	{
+		debug(`Server listening on port ${config.port}`);
+	})
 })

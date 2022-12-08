@@ -2,7 +2,7 @@ import passport, { PassportStatic } from 'passport';
 import { Strategy as stratJwt, ExtractJwt } from 'passport-jwt';
 import Debug from 'debug';
 
-import appConfig from './config';
+import appConfig from './config.js';
 
 const debug = Debug('fries-rest:config:passport');
 

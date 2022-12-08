@@ -1,5 +1,7 @@
 const config =
 {
+	port: process.env.FRIES_REST_PORT || 5000,
+
 	auth:
 	{
 		clientSecret: process.env.FRIES_REST_CLIENT_SECRET!
@@ -8,7 +10,7 @@ const config =
 	db:
 	{
 		url: process.env.FRIES_REST_MONGO_URL!,
-		name: process.env.FRIES_REST_MONGO_NAME || 'fries-rest-dev'
+		name: process.env.FRIES_REST_MONGO_DB || 'fries-rest-test'
 	}
 }
 
