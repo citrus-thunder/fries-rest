@@ -13,6 +13,12 @@
     "prestart": "npm run rebuild",
     "start": "cross-env API_PORT=5000 DEBUG=fries-rest,fries-rest:* nodemon -r dotenv/config out/server.js"
   },
+	"nodemonConfig": {
+		"watch": [
+			"./out"
+		],
+		"ext": "ts, js, mjs, json"
+	},
   "keywords": [],
   "author": "",
   "license": "ISC",
