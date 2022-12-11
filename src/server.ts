@@ -10,6 +10,7 @@ import playerRouter from './routers/player.js';
 import itemRouter from './routers/item.js';
 import armorRouter from './routers/armor.js';
 import weaponRouter from './routers/weapon.js';
+import monsterRouter from './routers/monster.js';
 
 const app = express();
 const debug = Debug('fries-rest:core');
@@ -25,6 +26,7 @@ app
 	.use('/api/item', itemRouter)
 	.use('/api/armor', armorRouter)
 	.use('/api/weapon', weaponRouter)
+	.use('/api/monster', monsterRouter)
 
 	// Other Routes
 	.get('/', (req, res) =>

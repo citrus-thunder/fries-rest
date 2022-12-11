@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { WithId, Document, UpdateResult, InsertOneResult, DeleteResult } from 'mongodb';
+import { WithId, Document, UpdateResult, InsertOneResult, DeleteResult, UpdateOptions } from 'mongodb';
 import { ObjectID } from 'bson';
 import Debug from 'debug';
 
@@ -7,6 +7,10 @@ import Config from '../config/config.js';
 import Client from '../util/mdb.js';
 
 const debug = Debug('fries-rest:controller:player');
+
+// todo: We will be moving shared CRUD controller logic to its own
+// class. For now the bulk of this file is using copied boilerplate
+// while we test basic CRUD functionality.
 
 const client = await Client.getClient();
 const db = client.db(Config.db.name);
@@ -23,11 +27,10 @@ async function getPlayer(playerId: number) : Promise<WithId<Document> | null>
 
 async function updatePlayer(playerId: number, data: object) : Promise<UpdateResult>
 {
-	const options =
+	const options: UpdateOptions =
 	{
-		upsert: false,
-		multiple: false
-	}
+		upsert: false
+	};
 
 	return await db.collection('players').updateOne({userId: playerId}, {$set: data}, options);
 }
@@ -61,7 +64,7 @@ export default
 			}
 			else
 			{
-				res.status(400)
+				res.status(400);
 				body = 'Error inserting new player record: Unable to insert with given request data';
 			}
 		}
