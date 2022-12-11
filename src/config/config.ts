@@ -1,10 +1,15 @@
+import Debug from 'debug';
+
+const debug = Debug('fries-rest:config');
+
 const config =
 {
 	port: process.env.FRIES_REST_PORT || 5000,
 
 	auth:
 	{
-		clientSecret: process.env.FRIES_REST_CLIENT_SECRET!
+		disabled: process.env.FRIES_REST_DISABLE_AUTH || false,
+		clientSecret: process.env.FRIES_REST_CLIENT_SECRET || undefined
 	},
 
 	db:
@@ -14,7 +19,15 @@ const config =
 	}
 }
 
-// todo: validate presence of required config items and throw if missing
+if (config.auth.disabled)
+{
+	debug('Warning: Auth is disabled. Only use no-auth mode for testing!');
+}
+
+if (!config.auth.disabled && config.auth.clientSecret == undefined)
+{
+	throw 'Client Secret must be provided if auth is enabled';
+}
 
 export const auth = config.auth;
 

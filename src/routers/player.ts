@@ -1,13 +1,15 @@
 import express, { Request, Response, NextFunction } from 'express';
 import passport from '../config/passport-config.js';
 
+import config from '../config/config.js';
+
 import controller from '../controllers/player.js';
 
 const router = express.Router();
-//const auth = passport.authenticate('jwt', { session: false });
 
-//test auth
-const auth = async (req: Request, res: Response, done: Function) => {done(null, false)};
+const auth = config.auth.disabled ?
+	async (req: Request, res: Response, done: Function) => {done(null, false)} :
+	passport.authenticate('jwt', { session: false });
 
 router.route('/:id')
 	.post(auth, controller.create)

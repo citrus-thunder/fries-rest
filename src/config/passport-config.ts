@@ -25,6 +25,11 @@ passport.deserializeUser((user: any, done) =>
 
 const config = (passport: PassportStatic) =>
 {
+	if (appConfig.auth.disabled)
+	{
+		return;
+	}
+
 	passport
 		.use('jwt', new stratJwt(
 			{
@@ -42,7 +47,7 @@ const config = (passport: PassportStatic) =>
 					return done(err);
 				}
 			}
-		))
+		));
 }
 
 passport.initialize();

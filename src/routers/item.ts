@@ -1,15 +1,18 @@
 import express, { Request, NextFunction } from 'express';
 import passport from '../config/passport-config.js';
 
+import config from '../config/config.js';
+
 import controller from '../controllers/item.js';
 
 const router = express.Router();
-const auth = passport.authenticate('jwt', { session: false });
 
-router.route('/new')
-	.post(auth, controller.create);
+const auth = config.auth.disabled ?
+	async (req: Request, res: Response, done: Function) => {done(null, false)} :
+	passport.authenticate('jwt', { session: false });
 
 router.route('/:id')
+	.post(auth, controller.create)
 	.get(auth, controller.read)
 	.put(auth, controller.update)
 	.delete(auth, controller.delete);
