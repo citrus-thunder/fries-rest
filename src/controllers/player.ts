@@ -121,7 +121,7 @@ export default
 	{
 		const playerId = parseInt(req.params.id);
 		let body: any = null;
-
+		// todo: separate player exist check, return 404 on fail
 		const result = await deletePlayer(playerId);
 
 		if (result.deletedCount > 0)
@@ -131,6 +131,10 @@ export default
 		}
 		else
 		{
+			// todo: add explicit player exist check above; update this
+			// with 400 status and generic error description.
+			// - don't forget to update readme when this is done.
+			// - also update other controllers to match
 			res.status(404);
 			body = `Unable to delete player with ID ${playerId}`;
 		}

@@ -1,6 +1,63 @@
 # Fries Quest REST API
 A Node-based REST API application for the Fries Quest Twitch-Integrated RPG. Play live at [JFriesTV](https://twitch.tv/jfriestv)!
 
+# Using the API
+The API can be accessed by simply sending standard HTTP requests directly to wherever the API is hosted.
+
+In order to perform CRUD operations, the client must have authenticated with the API beforehand.
+
+## Authentication
+`#TODO`
+
+## Performing CRUD Operations
+
+CRUD Operations can be performed by sending HTTP requests to the routes described in this section.
+
+In general, a response code of `200` indicates a successful operation, while anything else suggests one or more issues with the request.
+
+### Player Data: `/api/player/{id}`
+| HTTP Method | Operation | Response Codes | Description |
+| --- | --- | --- | --- |
+| `PUT` | `CREATE` | `200` `400` `409` | Create a new Player record with `userId: {id}` . `200` on success. `409` on record already exists. `400` on error.|
+| `GET` | `READ` | `200` `404` | Get Player record with `userId: {id}`. `200` on success. `404` on record not found.|
+| `POST` | `UPDATE` | `200` `400` | Update Player record with `userId: {id}`. `200` on success. `400` on error. |
+| `DELETE` | `DELETE` | `200` `404` | Delete Player record with `userId: {id}`. `200` on success. `404` on record not found. |
+
+### Monster Data: `/api/monster/{id}`
+| HTTP Method | Operation | Response Codes | Description |
+| --- | --- | --- | --- |
+| `PUT` | `CREATE` | `200` `400` `409` | Create a new Monster record with `monsterId: {id}` . `200` on success. `409` on record already exists. `400` on error.|
+| `GET` | `READ` | `200` `404` | Get Monster record with `monsterId: {id}`. `200` on success. `404` on record not found.|
+| `POST` | `UPDATE` | `200` `400` | Update Monster record with `monsterId: {id}`. `200` on success. `400` on error. |
+| `DELETE` | `DELETE` | `200` `404` | Delete Monster record with `monsterId: {id}`. `200` on success. `404` on record not found. |
+
+### Weapon Data: `/api/weapon/{id}`
+| HTTP Method | Operation | Response Codes | Description |
+| --- | --- | --- | --- |
+| `PUT` | `CREATE` | `200` `400` `409` | Create a new Weapon record with `weaponId: {id}` . `200` on success. `409` on record already exists. `400` on error.|
+| `GET` | `READ` | `200` `404` | Get Weapon record with `weaponId: {id}`. `200` on success. `404` on record not found.|
+| `POST` | `UPDATE` | `200` `400` | Update Weapon record with `weaponId: {id}`. `200` on success. `400` on error. |
+| `DELETE` | `DELETE` | `200` `404` | Delete Weapon record with `weaponId: {id}`. `200` on success. `404` on record not found. |
+
+### Armor Data: `/api/armor/{id}`
+| HTTP Method | Operation | Response Codes | Description |
+| --- | --- | --- | --- |
+| `PUT` | `CREATE` | `200` `400` `409` | Create a new Armor record with `armorId: {id}` . `200` on success. `409` on record already exists. `400` on error.|
+| `GET` | `READ` | `200` `404` | Get Armor record with `armorId: {id}`. `200` on success. `404` on record not found.|
+| `POST` | `UPDATE` | `200` `400` | Update Armor record with `armorId: {id}`. `200` on success. `400` on error. |
+| `DELETE` | `DELETE` | `200` `404` | Delete Armor record with `armorId: {id}`. `200` on success. `404` on record not found. |
+
+### Item Data: `/api/item/{id}`
+| HTTP Method | Operation | Response Codes | Description |
+| --- | --- | --- | --- |
+| `PUT` | `CREATE` | `200` `400` `409` | Create a new Item record with `itemId: {id}` . `200` on success. `409` on record already exists. `400` on error.|
+| `GET` | `READ` | `200` `404` | Get Item record with `itemId: {id}`. `200` on success. `404` on record not found.|
+| `POST` | `UPDATE` | `200` `400` | Update Item record with `itemId: {id}`. `200` on success. `400` on error. |
+| `DELETE` | `DELETE` | `200` `404` | Delete Item record with `itemId: {id}`. `200` on success. `404` on record not found. |
+
+---
+
+# Running the API
 
 ### Environment Setup
 The API relies on a number of environment variables:
