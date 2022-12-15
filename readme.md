@@ -21,7 +21,7 @@ The API relies on a number of environment variables, which are used to set vario
 
 
 
-If launching through Docker (recommended), we recommend creating a `.env` file with these values defined, which can be used to provide Docker with the variables when launching a continer.
+If launching through Docker (recommended), we recommend creating a `.env` file with these values defined, which can be used to provide Docker with the variables when launching a container.
 
 ### Launch Method 1: Docker (Recommended)
 A Dockerfile is already provided with this repository which can be used to easily get the API up and running without installing additional dependencies (beyond Docker). This is the preferred approach as it avoids potential environmental differences that can negatively affect the API.
