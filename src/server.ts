@@ -22,11 +22,11 @@ app
 	.use(express.urlencoded({extended: true}))
 
 	// Routers
-	.use('/api/player', playerRouter)
-	.use('/api/item', itemRouter)
-	.use('/api/armor', armorRouter)
-	.use('/api/weapon', weaponRouter)
-	.use('/api/monster', monsterRouter)
+	.use('/player', playerRouter)
+	.use('/item', itemRouter)
+	.use('/armor', armorRouter)
+	.use('/weapon', weaponRouter)
+	.use('/monster', monsterRouter)
 
 	// Other Routes
 	.get('/', (req, res) =>
