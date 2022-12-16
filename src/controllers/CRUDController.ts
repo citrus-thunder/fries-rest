@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { WithId, Document, UpdateResult, InsertOneResult, DeleteResult, UpdateOptions } from 'mongodb';
 import Debug from 'debug';
 
@@ -93,7 +93,7 @@ export default class CrudController
 		return this;
 	}
 
-	public create = async (req: Request, res: Response, done: Function) =>
+	public create = async (req: Request, res: Response, next: NextFunction) =>
 	{
 		const recordId = parseInt(req.params.id);
 		let body: any = null;
@@ -123,7 +123,7 @@ export default class CrudController
 		return res.send(body);
 	}
 
-	public read = async (req: Request, res: Response, done: Function) =>
+	public read = async (req: Request, res: Response, next: NextFunction) =>
 	{
 		const recordId = parseInt(req.params.id);
 		const record = await this._readFunc(recordId);
@@ -145,7 +145,7 @@ export default class CrudController
 		return res.send(body);
 	}
 
-	public update = async (req: Request, res: Response, done: Function) =>
+	public update = async (req: Request, res: Response, next: NextFunction) =>
 	{
 		const recordId = parseInt(req.params.id);
 		const update = req.body;
@@ -178,7 +178,7 @@ export default class CrudController
 		return res.send(body);
 	}
 
-	public delete = async (req: Request, res: Response, done: Function) =>
+	public delete = async (req: Request, res: Response, next: NextFunction) =>
 	{
 		const recordId = parseInt(req.params.id);
 		let body: any = null;
@@ -201,7 +201,7 @@ export default class CrudController
 		}
 		else
 		{
-			res.status(500); // todo: check code
+			res.status(500);
 			body = `Unknown error encountered attempting to delete record with ID {${this._identityField}: ${recordId}} from collection "${this._collectionName}"`;
 		}
 
