@@ -34,7 +34,7 @@ This will build a new fries-rest image from the current version of the API.
 #### Step 2: Build Container
 Once you have an image, you can build and run a container with the following command:
 
-`docker run -t -p 127.0.0.1:5000:5000/tcp --env-file <path to .env file> --name fries-rest`
+`docker run -t -p 127.0.0.1:5000:5000/tcp --env-file <path to .env file> --name fries-rest fries-rest:latest`
 
 ### Launch Method 2: Run with Node
 Alternatively, the API can be built and run directly with Node.
