@@ -5,3 +5,4 @@ dist/
 .vscode
 .vs
 .nyc_output
+reports/
