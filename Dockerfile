@@ -10,4 +10,4 @@ RUN npm install --qy
 COPY . .
 RUN npm run build
 
-CMD ["node", "out/server.js"]
+CMD ["node", "out/api/server.js"]

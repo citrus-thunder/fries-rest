@@ -1,46 +1,71 @@
 {
-  "name": "fries-rest",
-  "version": "0.0.1",
-  "description": "REST API for the Fries Quest Twitch-Integrated RPG",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "clean": "rm -rf ./out",
-    "rebuild": "npm run clean && npm run build",
-    "predebug": "npm run rebuild",
-    "debug": "cross-env API_PORT=5000 DEBUG=* nodemon -r dotenv/config out/server.js",
-    "prestart": "npm run rebuild",
-    "start": "cross-env API_PORT=5000 DEBUG=fries-rest,fries-rest:* nodemon -r dotenv/config out/server.js"
-  },
+	"name": "fries-rest",
+	"version": "0.0.1",
+	"description": "REST API for the Fries Quest Twitch-Integrated RPG",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"build": "tsc",
+		"clean": "rm -rf ./out",
+		"rebuild": "npm run clean && npm run build",
+		"predebug": "npm run rebuild",
+		"debug": "cross-env DEBUG=* nodemon -r dotenv/config out/api/server.js",
+		"prestart": "npm run rebuild",
+		"start": "cross-env DEBUG=fries-rest,fries-rest:* nodemon -r dotenv/config out/api/server.js",
+		"pretest": "npm run rebuild",
+		"test": "cross-env NODE_ENV=test mocha -r dotenv/config --exit --recursive --timeout 10000 ./out/",
+		"coverage": "nyc --all npm run test"
+	},
 	"nodemonConfig": {
 		"watch": [
 			"./out"
 		],
 		"ext": "ts, js, mjs, json"
 	},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "debug": "^4.3.4",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^8.5.1",
-    "mongodb": "^4.12.1",
-    "morgan": "^1.10.0",
-    "passport": "^0.6.0",
-    "passport-jwt": "^4.0.0"
-  },
-  "devDependencies": {
-    "@types/debug": "^4.1.7",
-    "@types/express": "^4.17.14",
-    "@types/mongodb": "^4.0.7",
-    "@types/morgan": "^1.9.3",
-    "@types/passport": "^1.0.11",
-    "@types/passport-jwt": "^3.0.7",
-    "cross-env": "^7.0.3",
-    "dotenv": "^16.0.3",
-    "nodemon": "^2.0.20",
-    "typescript": "^4.9.3"
-  }
+	"nyc": {
+		"extension": [
+			".ts"
+		],
+		"reporter": [
+			"lcov",
+			"html",
+			"text"
+		],
+		"include": [
+			"./api/**"
+		],
+		"report-dir": "./docs/coverage/"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"debug": "^4.3.4",
+		"express": "^4.18.2",
+		"jsonwebtoken": "^8.5.1",
+		"mongodb": "^4.12.1",
+		"morgan": "^1.10.0",
+		"passport": "^0.6.0",
+		"passport-jwt": "^4.0.0"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.3.4",
+		"@types/chai-http": "^4.2.0",
+		"@types/debug": "^4.1.7",
+		"@types/express": "^4.17.15",
+		"@types/http-server": "^0.12.1",
+		"@types/mocha": "^10.0.1",
+		"@types/mongodb": "^4.0.7",
+		"@types/morgan": "^1.9.3",
+		"@types/passport": "^1.0.11",
+		"@types/passport-jwt": "^3.0.7",
+		"chai": "^4.3.7",
+		"chai-http": "^4.3.0",
+		"cross-env": "^7.0.3",
+		"dotenv": "^16.0.3",
+		"mocha": "^10.2.0",
+		"nodemon": "^2.0.20",
+		"nyc": "^15.1.0",
+		"typescript": "^4.9.3"
+	}
 }

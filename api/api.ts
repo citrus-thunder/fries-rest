@@ -1,6 +1,7 @@
-import express from 'express';
+import express, {Express} from 'express';
 import Debug from 'debug';
 import morgan from 'morgan';
+import type http from 'http';
 
 import config from './config/config.js';
 import db from './util/mdb.js';
@@ -36,10 +37,41 @@ app
 			.send('API is here and listening!');
 	});
 
-db.connect(() =>
+type API =
 {
-	app.listen(config.port, () =>
+	app: Express,
+	server: http.Server | null,
+	connect: () => Promise<void>
+	disconnect: () => Promise<void>
+};
+
+const api: API =
+{
+	app: app,
+	server: null,
+	connect: async function()
 	{
-		debug(`Server listening on port ${config.port}`);
-	})
-})
+		if (this.server)
+		{
+			return;
+		}
+
+		await db.connect(() =>
+		{
+			this.server = app.listen(config.port, () =>
+			{
+				debug(`Server listening on port ${config.port}`);
+			})
+		});
+	},
+	disconnect: async function()
+	{
+		if (this.server != null)
+		{
+			this.server.close();
+			this.server = null;
+		}
+	}
+}
+
+export default api;

@@ -15,8 +15,13 @@ const config =
 	db:
 	{
 		url: process.env.FRIES_REST_MONGO_URL!,
-		name: process.env.FRIES_REST_MONGO_DB || 'fries-rest-test'
+		name: process.env.FRIES_REST_MONGO_DB!
 	}
+}
+
+if (!(config.db.url && config.db.name))
+{
+	throw 'DB URL/Name must be provided';
 }
 
 if (config.auth.disabled)

@@ -19,8 +19,6 @@ The API relies on a number of environment variables, which are used to set vario
 |`FRIES_REST_MONGO_URL`|N/A|true|Full connection URL string to target MongoDB instance.|
 |`FRIES_REST_MONGO_DB`|N/A|true|MongoDB Database name within the cluster located at `FRIES_REST_MONGO_URL` |
 
-
-
 If launching through Docker (recommended), we recommend creating a `.env` file with these values defined, which can be used to provide Docker with the variables when launching a container.
 
 ### Launch Method 1: Docker (Recommended)
@@ -36,11 +34,11 @@ This will build a new fries-rest image from the current version of the API.
 #### Step 2: Build Container
 Once you have an image, you can build and run a container with the following command:
 
-`docker run -t --env-file <path to .env file> --name fries-rest`
+`docker run -t -p 127.0.0.1:5000:5000/tcp --env-file <path to .env file> --name fries-rest`
 
 ### Launch Method 2: Run with Node
 Alternatively, the API can be built and run directly with Node.
 
 * Step 1: Build the application with `node run build`. This will produce the final application in the `./out` directory.
 * Step 2: Ensure the required environment variables are present, either defined directly in your environment or otherwise provided to the Node process during the next step.
-* Step 3: Run the service with `node ./out/server.js`
+* Step 3: Run the service with `node ./out/api/server.js`
