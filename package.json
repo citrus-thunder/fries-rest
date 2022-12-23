@@ -14,9 +14,9 @@
 		"start": "cross-env DEBUG=fries-rest,fries-rest:* nodemon -r dotenv/config out/api/server.js",
 		"pretest": "npm run rebuild",
 		"test": "cross-env NODE_ENV=test mocha -r dotenv/config -r ts-node/register -r source-map-support/register --exit --recursive ./out/test/**",
-		"precoverage": "rm -rf ./docs/coverage",
+		"precoverage": "rm -rf ./reports/coverage",
 		"coverage": "c8 npm run test",
-		"postcoverage": "rm -rf ./docs/coverage/tmp"
+		"postcoverage": "rm -rf ./reports/coverage/tmp"
 	},
 	"nodemonConfig": {
 		"watch": [
