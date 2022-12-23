@@ -41,30 +41,27 @@ type API =
 {
 	app: Express,
 	server: http.Server | null,
-	connect: () => Promise<void>
-	disconnect: () => Promise<void>
+	start: () => Promise<void>
+	stop: () => Promise<void>
 };
 
 const api: API =
 {
 	app: app,
 	server: null,
-	connect: async function()
+	start: async function()
 	{
 		if (this.server)
 		{
 			return;
 		}
-
-		await db.connect(() =>
+		this.server = app.listen(config.port, () =>
 		{
-			this.server = app.listen(config.port, () =>
-			{
-				debug(`Server listening on port ${config.port}`);
-			})
+			debug(`Server listening on port ${config.port}`);
 		});
 	},
-	disconnect: async function()
+
+	stop: async function()
 	{
 		if (this.server != null)
 		{

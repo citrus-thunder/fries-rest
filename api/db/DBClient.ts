@@ -1,5 +1,5 @@
 import Debug from 'debug';
-import { MongoClient, ObjectId } from 'mongodb';
+import { MongoClient, MongoClientOptions, MongoServerSelectionError, ObjectId } from 'mongodb';
 import config from '../config/config.js';
 
 const debug = Debug('fries-rest:db:client');
@@ -22,7 +22,7 @@ namespace DB
 			return await db.connect(callback);
 		}
 
-		public async connect(callback?: Function) : Promise<MongoClient>
+		public async connect(callback?: Function) : Promise<MongoClient | null>
 		{
 			if (this.client)
 			{
@@ -33,20 +33,32 @@ namespace DB
 				return this.client;
 			}
 
-			let c = await MongoClient.connect(this.url);
-			if (callback)
+			let res: MongoClient | null = null;
+			const options: MongoClientOptions =
 			{
-				callback();
+				serverSelectionTimeoutMS: 5000,
+				connectTimeoutMS: 5000
+			};
+
+			try
+			{
+				res = await MongoClient.connect(this.url, options);
+				if (callback)
+				{
+					callback();
+				}
+			}
+			catch (ex)
+			{
+				debug('Error connecting to Mongo instance. Check that the connection string is correct and that mongo is running');
+				return null;
 			}
 
-			return c;
+			return res;
 		}
 
-		public async getClient() : Promise<MongoClient>
+		public async getClient() : Promise<MongoClient | null>
 		{
-			// todo: We want to be sure this detects dropped/interrupted connections and 
-			// attempts to repair it. A simple truthiness check on this.client probably doesn't
-			// suffice.
 			if (this.client)
 			{
 				return this.client;

@@ -7,13 +7,10 @@ import mdb from '../util/mdb.js';
 
 const debug = Debug('fries-rest:controller:CrudController');
 
-type CreateFunc = (data: object) => Promise<InsertOneResult>;
-type ReadFunc = (id: any) => Promise<WithId<Document> | null>;
-type UpdateFunc = (id: any, data: object) => Promise<UpdateResult>;
-type DeleteFunc = (id: any) => Promise<DeleteResult>;
-
-const client = await mdb.getClient();
-const db = client.db(Config.db.name);
+type CreateFunc = (data: object) => Promise<InsertOneResult | undefined>;
+type ReadFunc = (id: any) => Promise<WithId<Document> | null | undefined>;
+type UpdateFunc = (id: any, data: object) => Promise<UpdateResult | undefined>;
+type DeleteFunc = (id: any) => Promise<DeleteResult | undefined>;
 
 /**
  * Simple CRUD Controller utility
@@ -33,40 +30,44 @@ export default class CrudController
 		this._collectionName = collectionName;
 		this._identityField = identityField;
 
-		this._createFunc = async (data: object): Promise<InsertOneResult> =>
+		this._createFunc = async (data: object): Promise<InsertOneResult | undefined> =>
 		{
-			return await db.collection(this._collectionName).insertOne(data);
+			const db = await this.getDb();
+
+			return await db?.collection(this._collectionName).insertOne(data);
 		};
 
-		this._readFunc = async (id: any): Promise<WithId<Document> | null> =>
+		this._readFunc = async (id: any): Promise<WithId<Document> | null | undefined> =>
 		{
+			const db = await this.getDb();
 			const filter: any = {};
 			filter[this._identityField] = id;
-	
-			return await db.collection(this._collectionName).findOne(filter);
+
+			return await db?.collection(this._collectionName).findOne(filter);
 		};
 
-		this._updateFunc = async (id: any, data: object): Promise<UpdateResult> =>
+		this._updateFunc = async (id: any, data: object): Promise<UpdateResult | undefined> =>
 		{
+			const db = await this.getDb();
 			const options: UpdateOptions =
 			{
 				upsert: false
 			};
-	
+
 			const filter: any = {};
 			filter[this._identityField] = id;
-	
-			return await db.collection(this._collectionName).updateOne(filter, {$set: data}, options);
+
+			return await db?.collection(this._collectionName).updateOne(filter, {$set: data}, options);
 		};
 
-		this._deleteFunc = async (id: any): Promise<DeleteResult> =>
+		this._deleteFunc = async (id: any): Promise<DeleteResult | undefined> =>
 		{
+			const db = await this.getDb();
 			const filter: any = {};
 			filter[this._identityField] = id;
 
-			return await db.collection(this._collectionName).deleteOne(filter);
+			return await db?.collection(this._collectionName).deleteOne(filter);
 		};
-
 	}
 
 	public setCreate = (createFunc: CreateFunc) : CrudController =>
@@ -100,6 +101,13 @@ export default class CrudController
 
 		const existingRecord = await this._readFunc(recordId);
 
+		if (existingRecord === undefined)
+		{
+			return res
+				.status(500)
+				.send('Unexpected server error');
+		}
+
 		if (existingRecord != null)
 		{
 			res.status(409);
@@ -108,7 +116,12 @@ export default class CrudController
 		else
 		{
 			const record = await this._createFunc(req.body);
-			if (record.insertedId)
+			if (record === undefined)
+			{
+				res.status(500);
+				body = 'Unexpected server error';
+			}
+			else if (record.insertedId)
 			{
 				res.status(200);
 				body = `New record created in collection "${this._collectionName}"`;
@@ -128,6 +141,13 @@ export default class CrudController
 		const recordId = parseInt(req.params.id);
 		const record = await this._readFunc(recordId);
 		let body: any = null;
+
+		if (record === undefined)
+		{
+			return res
+				.status(500)
+				.send('Unexpected server error');
+		}
 
 		if (record == null)
 		{
@@ -152,6 +172,13 @@ export default class CrudController
 		let body: any = null;
 
 		const existingRecord = await this._readFunc(recordId);
+		if (existingRecord === undefined)
+		{
+			return res
+				.status(500)
+				.send('Unexpected server error');
+		}
+
 		if (existingRecord == null)
 		{
 			res.status(404);
@@ -161,8 +188,12 @@ export default class CrudController
 		}
 
 		const result = await this._updateFunc(recordId, update);
-
-		if (result.modifiedCount < 1)
+		if (result === undefined)
+		{
+			res.status(500);
+			body = 'Unexpected server error';
+		}
+		else if (result.modifiedCount < 1)
 		{
 			res.status(400);
 			body = `Error updating record with ID {${this._identityField}: ${recordId}} from collection "${this._collectionName}". No records modified`;
@@ -184,6 +215,13 @@ export default class CrudController
 		let body: any = null;
 
 		const existingRecord = await this._readFunc(recordId);
+		if (existingRecord === undefined)
+		{
+			return res
+				.status(500)
+				.send('Unexpected server error');
+		}
+
 		if (existingRecord == null)
 		{
 			res.status(404);
@@ -193,8 +231,12 @@ export default class CrudController
 		}
 
 		const result = await this._deleteFunc(recordId);
-
-		if (result.deletedCount > 0)
+		if (result === undefined)
+		{
+			res.status(500);
+			body = 'Unexpected server error';
+		}
+		else if (result.deletedCount > 0)
 		{
 			res.status(200);
 			body = `Record with ID {${this._identityField}: ${recordId}} from collection "${this._collectionName}" deleted;`
@@ -206,5 +248,12 @@ export default class CrudController
 		}
 
 		return res.send(body);
+	}
+
+	private getDb = async () =>
+	{
+		const client = await mdb.getClient();
+		const db = client?.db(Config.db.name);
+		return db;
 	}
 }

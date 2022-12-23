@@ -11,7 +11,7 @@ describe('Player', () =>
 {
 	before(async () =>
 	{
-		await api.connect();
+		await api.start();
 		const res = await chai.request(api.app)
 			.post('/player/-1')
 			.send(testPlayer)
@@ -21,11 +21,11 @@ describe('Player', () =>
 
 	after(async () =>
 	{
-		api.disconnect();
 		const res = await chai.request(api.app)
 			.delete('/player/-1')
 
 		res.should.have.status(200);
+		await api.stop();
 	});
 
 	describe('/GET player', () =>
