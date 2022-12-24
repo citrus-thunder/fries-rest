@@ -66,6 +66,15 @@ describe('Player', () =>
 			resCreate.should.have.status(200);
 		});
 
+		it('Try POST with no ID param', async () => 
+		{
+			const res = await chai.request(api.app)
+				.post('/player')
+				.send(testPlayer);
+
+			res.should.have.status(400);
+		});
+
 		it('Try POST new player under mismatched record', async () =>
 		{
 			const res = await chai.request(api.app)
@@ -108,7 +117,7 @@ describe('Player', () =>
 		it('GET player with ID -1', async () =>
 		{
 			const res = await chai.request(api.app)
-				.get('/player/-1')
+				.get('/player/-1');
 
 			res.should.have.status(200);
 			res.body.should.be.a('object');
@@ -118,11 +127,19 @@ describe('Player', () =>
 		it('GET non-existent player', async () =>
 		{
 			const res = await chai.request(api.app)
-				.get('/player/-2')
+				.get('/player/-2');
 
 			res.should.have.status(404);
 			res.body.should.be.empty;
 			res.text.should.not.be.empty;
+		});
+
+		it('Try GET player with no ID param', async () =>
+		{
+			const res = await chai.request(api.app)
+				.get('/player');
+
+			res.should.have.status(400);
 		});
 
 		it('Try GET player with invalid ID', async () =>
@@ -154,6 +171,16 @@ describe('Player', () =>
 				.get('/player/-1');
 
 			resCheck.body.should.have.property('username', name);
+		});
+
+		it('Try PUT player with no ID param', async () =>
+		{
+			const name = 'Updated through API!';
+			const req = await chai.request(api.app)
+				.put('/player')
+				.send({username: name});
+
+			req.should.have.status(400);
 		});
 
 		it('Try PUT non-existent player', async () =>
@@ -194,6 +221,14 @@ describe('Player', () =>
 				.delete('/player/-1');
 
 			res.should.have.status(200);
+		});
+
+		it('Try DELETE player with no ID param', async () =>
+		{
+			const res = await chai.request(api.app)
+				.delete('/player');
+
+			res.should.have.status(400);
 		});
 
 		it('Try DELETE player with invalid ID', async () =>

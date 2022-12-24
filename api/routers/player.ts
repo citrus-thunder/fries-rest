@@ -15,12 +15,6 @@ const reqValidator =
 {
 	post: (req: Request, res: Response, next: NextFunction) =>
 	{
-		if (!req.params.id)
-		{
-			res.status(400);
-			return res.send('Error: Malformed request. Please include ID parameter in the request path');
-		}
-
 		if (isNaN(Number(req.params.id)))
 		{
 			res.status(400);
@@ -39,12 +33,6 @@ const reqValidator =
 
 	get: (req: Request, res: Response, next: NextFunction) =>
 	{
-		if (!req.params.id)
-		{
-			res.status(400);
-			return res.send('Error: Malformed request. Please include ID parameter in the request path');
-		}
-
 		if (isNaN(Number(req.params.id)))
 		{
 			res.status(400);
@@ -56,12 +44,6 @@ const reqValidator =
 
 	put: (req: Request, res: Response, next: NextFunction) =>
 	{
-		if (!req.params.id)
-		{
-			res.status(400);
-			return res.send('Error: Malformed request. Please include ID parameter in the request path');
-		}
-
 		if (isNaN(Number(req.params.id)))
 		{
 			res.status(400);
@@ -80,12 +62,6 @@ const reqValidator =
 
 	delete: (req: Request, res: Response, next: NextFunction) =>
 	{
-		if (!req.params.id)
-		{
-			res.status(400);
-			return res.send('Error: Malformed request. Please include ID parameter in the request path');
-		}
-
 		if (isNaN(Number(req.params.id)))
 		{
 			res.status(400);
@@ -97,6 +73,14 @@ const reqValidator =
 }
 
 const controller = new CrudController('players', 'userId');
+
+router.route('/')
+	.all((req, res, done) =>
+	{
+		return res
+			.status(400)
+			.send('Invalid Route. Please send requests to /player/{id}');
+	});
 
 router.route('/:id')
 	.post(auth, reqValidator.post, controller.create)
