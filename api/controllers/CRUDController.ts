@@ -115,6 +115,13 @@ export default class CrudController
 		}
 		else
 		{
+			if (req.body[this._identityField] != req.params.id)
+			{
+				return res
+					.status(400)
+					.send('Error inserting record: Request ID param and record ID must match');
+			}
+
 			const record = await this._createFunc(req.body);
 			if (record === undefined)
 			{

@@ -18,7 +18,7 @@ const debug = Debug('fries-rest:core');
 
 app
 	// Imported Middleware
-	.use(morgan('tiny'))
+	.use(morgan('dev'))
 	.use(express.json())
 	.use(express.urlencoded({extended: true}))
 

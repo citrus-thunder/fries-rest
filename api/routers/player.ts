@@ -27,7 +27,12 @@ const reqValidator =
 			return res.send('Error: Malformed request. Player IDs must be numeric');
 		}
 
-		// todo: ensure any required fields are in req body
+		if (Object.keys(req.body).length === 0)
+		{
+			return res
+				.status(400)
+				.send('Error: Malformed Request. POST must have request body');
+		}
 
 		next();
 	},
@@ -61,6 +66,13 @@ const reqValidator =
 		{
 			res.status(400);
 			return res.send('Error: Malformed request. Player IDs must be numeric');
+		}
+
+		if (Object.keys(req.body).length === 0)
+		{
+			return res
+				.status(400)
+				.send('Error: Malformed Request. PUT must have request body');
 		}
 
 		next();
