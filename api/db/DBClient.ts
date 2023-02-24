@@ -50,7 +50,7 @@ namespace DB
 			}
 			catch (ex)
 			{
-				debug('Error connecting to Mongo instance. Check that the connection string is correct and that mongo is running');
+				debug('Error connecting to Mongo instance. Check that the connection string is correct and that mongo is running' + ex);
 				return null;
 			}
 
