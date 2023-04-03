@@ -26,6 +26,7 @@ namespace DB
 		{
 			if (this.client)
 			{
+				debug('Existing DB connection found: reusing current connection');
 				if (callback)
 				{
 					callback();
@@ -42,8 +43,10 @@ namespace DB
 
 			try
 			{
+				debug('No current DB connection found. Attempting new connection...');
 				res = await MongoClient.connect(this.url, options);
 				this.client = res;
+				debug('New DB Connection established!');
 				if (callback)
 				{
 					callback();
