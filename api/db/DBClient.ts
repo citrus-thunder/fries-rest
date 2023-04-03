@@ -43,6 +43,7 @@ namespace DB
 			try
 			{
 				res = await MongoClient.connect(this.url, options);
+				this.client = res;
 				if (callback)
 				{
 					callback();
