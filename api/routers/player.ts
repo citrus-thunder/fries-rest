@@ -69,18 +69,24 @@ const reqValidator =
 		}
 
 		next();
-	}
+	},
+
+	query: (req: Request, res: Response, next: NextFunction) =>
+		{
+		if (!req.body.query)
+			{
+			res.status(400);
+			return res.send('Error: Malformed request. Player data query must include a query in the request body');
+			}
+
+		next();
+		}
 }
 
 const controller = new CrudController('players', 'userId');
 
 router.route('/')
-	.all((req, res, done) =>
-	{
-		return res
-			.status(400)
-			.send('Invalid Route. Please send requests to /player/{id}');
-	});
+	.get(auth, reqValidator.query, controller.query);
 
 router.route('/:id')
 	.post(auth, reqValidator.post, controller.create)

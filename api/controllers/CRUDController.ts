@@ -11,6 +11,7 @@ type CreateFunc = (data: object) => Promise<InsertOneResult | undefined>;
 type ReadFunc = (id: any) => Promise<WithId<Document> | null | undefined>;
 type UpdateFunc = (id: any, data: object) => Promise<UpdateResult | undefined>;
 type DeleteFunc = (id: any) => Promise<DeleteResult | undefined>;
+type QueryFunc = (query: object, project?: object) => Promise<WithId<Document>[] | null | undefined>;
 
 /**
  * Simple CRUD Controller utility
@@ -21,6 +22,7 @@ export default class CrudController
 	private _readFunc: ReadFunc;
 	private _updateFunc: UpdateFunc;
 	private _deleteFunc: DeleteFunc;
+	private _queryFunc: QueryFunc;
 
 	private _collectionName: string;
 	private _identityField: string;
@@ -68,6 +70,17 @@ export default class CrudController
 
 			return await db?.collection(this._collectionName).deleteOne(filter);
 		};
+
+		this._queryFunc = async (query: object, project?: object): Promise<WithId<Document>[] | null | undefined> =>
+		{
+			const db = await this.getDb();
+			let result = db?.collection(this._collectionName).find(query);
+			if (project && result)
+				{
+				result = result.project(project);
+				}
+			return await result?.toArray();
+		}
 	}
 
 	public setCreate = (createFunc: CreateFunc) : CrudController =>
@@ -91,6 +104,12 @@ export default class CrudController
 	public setDelete = (deleteFunc: DeleteFunc) : CrudController =>
 	{
 		this._deleteFunc = deleteFunc;
+		return this;
+	}
+
+	public setQuery = (queryFunc: QueryFunc) : CrudController =>
+	{
+		this._queryFunc = queryFunc;
 		return this;
 	}
 
@@ -159,7 +178,7 @@ export default class CrudController
 		if (record == null)
 		{
 			res.status(404);
-			body = `Record with ID {${this._identityField}: ${recordId}} from collection "${this._collectionName} not found"`;
+			body = `Record with ID {${this._identityField}: ${recordId}} from collection "${this._collectionName}" not found`;
 			debug(`Unable to find record with ID {${this._identityField}: ${recordId}} from collection ${this._collectionName}`);
 		}
 		else
@@ -254,6 +273,27 @@ export default class CrudController
 			body = `Unknown error encountered attempting to delete record with ID {${this._identityField}: ${recordId}} from collection "${this._collectionName}"`;
 		}
 
+		return res.send(body);
+	}
+
+	public query = async (req: Request, res: Response, next: NextFunction) =>
+	{
+		const query = req.body.query;
+		const project = req.body.project;
+		let body: any = null;
+
+		const result = await this._queryFunc(query, project);
+		if (result === undefined)
+			{
+			res.status(500);
+			body = 'Unexpected server error';
+			}
+		else
+			{
+			res.status(200);
+			body = result;
+			}
+		
 		return res.send(body);
 	}
 

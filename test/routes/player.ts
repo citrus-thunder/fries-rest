@@ -247,4 +247,27 @@ describe('Player', () =>
 			res.should.have.status(404);
 		});
 	});
+
+	describe('Query /player', () =>
+	{
+		it('Find player with username "Test Player"', async () =>
+		{
+			const res = await chai.request(api.app)
+				.post('/player/')
+				.send({username: 'Test Player'});
+			
+			res.should.have.status(200);
+			// todo: res should have 1 result in body
+		});
+
+		it ('Try find player with username "Real Player"', async () =>
+		{
+			const res = await chai.request(api.app)
+				.post('/player/')
+				.send({username: 'Real Player'});
+			
+			res.should.have.status(200);
+			// todo: res should have 0 results in body
+		});
+	});
 });
