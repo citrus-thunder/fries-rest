@@ -15,6 +15,12 @@ const reqValidator =
 {
 	post: (req: Request, res: Response, next: NextFunction) =>
 	{
+		if (req.params.id === undefined)
+		{
+			res.status(400);
+			return res.send('Error: Malformed request. This action requires an ID parameter');
+		}
+
 		if (isNaN(Number(req.params.id)))
 		{
 			res.status(400);
@@ -33,6 +39,12 @@ const reqValidator =
 
 	get: (req: Request, res: Response, next: NextFunction) =>
 	{
+		if (req.params.id === undefined)
+		{
+			res.status(400);
+			return res.send('Error: Malformed request. This action requires an ID parameter');
+		}
+
 		if (isNaN(Number(req.params.id)))
 		{
 			res.status(400);
@@ -44,6 +56,12 @@ const reqValidator =
 
 	put: (req: Request, res: Response, next: NextFunction) =>
 	{
+		if (req.params.id === undefined)
+		{
+			res.status(400);
+			return res.send('Error: Malformed request. This action requires an ID parameter');
+		}
+
 		if (isNaN(Number(req.params.id)))
 		{
 			res.status(400);
@@ -62,6 +80,12 @@ const reqValidator =
 
 	delete: (req: Request, res: Response, next: NextFunction) =>
 	{
+		if (req.params.id === undefined)
+		{
+			res.status(400);
+			return res.send('Error: Malformed request. This action requires an ID parameter');
+		}
+
 		if (isNaN(Number(req.params.id)))
 		{
 			res.status(400);
@@ -85,8 +109,16 @@ const reqValidator =
 
 const controller = new CrudController('players', 'userId');
 
+const invalidActionHandler = (req: Request, res: Response, next: NextFunction) =>
+{
+	return res.status(400).send('This action is not available at this endpoint');
+}
+
 router.route('/')
-	.get(auth, reqValidator.query, controller.query);
+	.post(invalidActionHandler)
+	.get(auth, reqValidator.query, controller.query)
+	.put(invalidActionHandler)
+	.delete(invalidActionHandler);
 
 router.route('/:id')
 	.post(auth, reqValidator.post, controller.create)
