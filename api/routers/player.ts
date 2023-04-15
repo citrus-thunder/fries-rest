@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
+import { WithId, Document, UpdateResult, UpdateOptions, DeleteResult } from 'mongodb';
 import passport from '../config/passport-config.js';
 
 import config from '../config/config.js';
@@ -107,7 +108,43 @@ const reqValidator =
 		}
 }
 
-const controller = new CrudController('players', 'userId');
+const collectionName = 'players';
+const identityField = 'userId';
+const controller = new CrudController(collectionName, identityField);
+
+// Twitch handles player IDs as strings, but our id param comes in as an int,
+// so we'll override non-create actions to "convert" the ID to a 
+// string before querying the DB.
+controller
+	.setRead(async (id: any): Promise<WithId<Document> | null | undefined> =>
+	{
+		const db = await controller.getDb();
+
+		const filter: any = {};
+		filter[identityField] = id.toString();
+
+		return await db?.collection(collectionName).findOne(filter);
+	})
+	.setUpdate(async (id: any, data: object): Promise<UpdateResult | undefined> =>
+	{
+		const db = await controller.getDb();
+
+		const filter: any = {};
+		filter[identityField] = id.toString();
+
+		const options: UpdateOptions = {upsert: false};
+
+		return await db?.collection(collectionName).updateOne(filter, {$set: data}, options)
+	})
+	.setDelete(async (id: any): Promise<DeleteResult | undefined> =>
+	{
+		const db = await controller.getDb();
+
+		const filter: any = {};
+		filter[identityField] = id.toString();
+
+		return await db?.collection(collectionName).deleteOne(filter);
+	});
 
 const invalidActionHandler = (req: Request, res: Response, next: NextFunction) =>
 {

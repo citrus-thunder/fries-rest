@@ -297,7 +297,7 @@ export default class CrudController
 		return res.send(body);
 	}
 
-	private getDb = async () =>
+	public getDb = async () =>
 	{
 		const client = await mdb.getClient();
 		const db = client?.db(Config.db.name);

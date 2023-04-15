@@ -1,7 +1,7 @@
 export default 
 {
 	"username": "Test Player",
-	"userId": -1,
+	"userId": "-1",
 	"equipment": {
 			"armor": 1,
 			"shield": 2,
