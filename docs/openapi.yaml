@@ -24,6 +24,41 @@ tags:
 #    url: http://localhost:5000
 
 paths:
+  /player/:
+    get:
+      description:
+        Query Player data with a custom query and options.
+        See MongoDB documentation for query and aggregate options syntax
+      tags:
+        - Player Data
+      parameters:
+        - name: query
+          description:
+            Player Data Query.
+            This is passed directly to MongoDB.find() by the API, and can use
+            any/all of MongoDB's Query Operators
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/RecordQuery'
+        - name: options
+          description:
+            Player Data Query Options.
+            Options are passed directly to MongoDB and can use any/all of
+            MondoDB's Query and Projection Operators where appropriate.
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/RecordQueryOptions'
+      responses:
+        '200':
+          description: Successful Operation
+        '400':
+          description: Malformed Request Data
+        '401':
+          description: Unauthorized
+        '500':
+          description: Unhandled Server Error
   /player/{userId}:
     post:
       description: Create new Player record with ID `userId`
@@ -514,6 +549,33 @@ components:
     RecordId:
       description: Unique Record Id
       type: number
+    RecordQuery:
+      type: object
+      example:
+        matchField: 'recordValue'
+        matchMultiField: {$in: ['value1', 'value2', 'value3']}
+        greaterThanField: {$gt: 100}
+    RecordQueryOptions:
+      type: object
+      properties:
+        project:
+          type: object
+          additionalProperties:
+            type: number
+            default: 1
+          example:
+            showThisField: 1
+            hideThisField: 0
+        limit:
+          type: number
+        sort:
+          type: object
+          additionalProperties:
+            type: number
+            default: 1
+          example:
+            ascendSortField: 1
+            descendSortField: -1
     Player:
       description: Player Record
       type: object

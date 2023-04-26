@@ -97,15 +97,15 @@ const reqValidator =
 	},
 
 	query: (req: Request, res: Response, next: NextFunction) =>
-		{
+	{
 		if (!req.body.query)
-			{
+		{
 			res.status(400);
 			return res.send('Error: Malformed request. Player data query must include a query in the request body');
-			}
+		}
 
 		next();
-		}
+	}
 }
 
 const collectionName = 'players';

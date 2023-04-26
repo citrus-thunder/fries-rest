@@ -260,7 +260,7 @@ describe('Player', () =>
 			res.body.should.have.lengthOf(1);
 		});
 
-		it ('Try find player with username "Real Player"', async () =>
+		it('Try find player with username "Real Player"', async () =>
 		{
 			const res = await chai.request(api.app)
 				.get('/player/')
@@ -268,6 +268,28 @@ describe('Player', () =>
 			
 			res.should.have.status(200);
 			res.body.should.have.lengthOf(0);
+		});
+
+		it('Check player result projection', async () =>
+		{
+			const query = {username: 'Test Player'};
+			const options =
+				{
+				project:
+					{
+					'_id': 0,
+					'username': 1
+					}
+				};
+
+			const res = await chai.request(api.app)
+				.get('/player/')
+				.send({query: query, options: options});
+
+			res.should.have.status(200);
+			res.body.should.have.lengthOf(1);
+			res.body[0].should.have.property('username');
+			res.body[0].should.not.have.property('_id');
 		});
 	});
 });

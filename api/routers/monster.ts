@@ -11,8 +11,6 @@ const auth = config.auth.disabled ?
 	async (req: Request, res: Response, done: Function) => {done(null, false)} :
 	passport.authenticate('jwt', { session: false });
 
-const controller = new CrudController('monsters', 'monsterId');
-
 const reqValidator =
 {
 	post: (req: Request, res: Response, next: NextFunction) =>
@@ -59,8 +57,32 @@ const reqValidator =
 		}
 
 		next();
+	},
+
+	query: (req: Request, res: Response, next: NextFunction) =>
+	{
+		if (!req.body.query)
+		{
+			res.status(400);
+			return res.send('Error: Malformed request. Monster data query must include a query in the request body');
+		}
+
+		next();
 	}
 }
+
+const controller = new CrudController('monsters', 'monsterId');
+
+const invalidActionHandler = (req: Request, res: Response, next: NextFunction) =>
+{
+	return res.status(400).send('This action is not available at this endpoint');
+}
+
+router.route('/')
+	.post(invalidActionHandler)
+	.get(auth, reqValidator.query, controller.query)
+	.put(invalidActionHandler)
+	.delete(invalidActionHandler);
 
 router.route('/:id')
 	.post(auth, reqValidator.post, controller.create)

@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { WithId, Document, UpdateResult, InsertOneResult, DeleteResult, UpdateOptions } from 'mongodb';
+import { WithId, Document, UpdateResult, InsertOneResult, DeleteResult, UpdateOptions, Sort } from 'mongodb';
 import Debug from 'debug';
 
 import Config from '../config/config.js';
@@ -7,11 +7,18 @@ import mdb from '../util/mdb.js';
 
 const debug = Debug('fries-rest:controller:CrudController');
 
+type QueryOptions =
+{
+	project?: object,
+	limit?: number,
+	sort?: Sort,
+}
+
 type CreateFunc = (data: object) => Promise<InsertOneResult | undefined>;
 type ReadFunc = (id: any) => Promise<WithId<Document> | null | undefined>;
 type UpdateFunc = (id: any, data: object) => Promise<UpdateResult | undefined>;
 type DeleteFunc = (id: any) => Promise<DeleteResult | undefined>;
-type QueryFunc = (query: object, project?: object) => Promise<WithId<Document>[] | null | undefined>;
+type QueryFunc = (query: object, options?: QueryOptions) => Promise<WithId<Document>[] | null | undefined>;
 
 /**
  * Simple CRUD Controller utility
@@ -71,13 +78,24 @@ export default class CrudController
 			return await db?.collection(this._collectionName).deleteOne(filter);
 		};
 
-		this._queryFunc = async (query: object, project?: object): Promise<WithId<Document>[] | null | undefined> =>
+		this._queryFunc = async (query: object, options?: QueryOptions): Promise<WithId<Document>[] | null | undefined> =>
 		{
 			const db = await this.getDb();
 			let result = db?.collection(this._collectionName).find(query);
-			if (project && result)
+
+			if (result && options?.limit)
 				{
-				result = result.project(project);
+				result = result.limit(options.limit);
+				}
+
+			if (result && options?.sort)
+				{
+				result = result.sort(options.sort);
+				}
+
+			if (result && options?.project)
+				{
+				result = result.project(options.project);
 				}
 			return await result?.toArray();
 		}
@@ -281,10 +299,10 @@ export default class CrudController
 	public query = async (req: Request, res: Response, next: NextFunction) =>
 	{
 		const query = req.body.query;
-		const project = req.body.project;
+		const options = req.body.options;
 		let body: any = null;
 
-		const result = await this._queryFunc(query, project);
+		const result = await this._queryFunc(query, options);
 		if (result === undefined)
 			{
 			res.status(500);

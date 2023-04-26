@@ -57,10 +57,32 @@ const auth = config.auth.disabled ?
 		}
 
 		next();
+	},
+
+	query: (req: Request, res: Response, next: NextFunction) =>
+	{
+		if (!req.body.query)
+		{
+			res.status(400);
+			return res.send('Error: Malformed request. Weapon data query must include a query in the request body');
+		}
+
+		next();
 	}
 }
 
 const controller = new CrudController('weapons', 'weaponId');
+
+const invalidActionHandler = (req: Request, res: Response, next: NextFunction) =>
+{
+	return res.status(400).send('This action is not available at this endpoint');
+}
+
+router.route('/')
+	.post(invalidActionHandler)
+	.get(auth, reqValidator.query, controller.query)
+	.put(invalidActionHandler)
+	.delete(invalidActionHandler);
 
 router.route('/:id')
 	.post(auth, reqValidator.post, controller.create)
